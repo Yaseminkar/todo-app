@@ -1,6 +1,6 @@
-import './App.css';
+import './components/css/styles.css'
 import TodoList from './components';
-import './components/css/style.css'
+
 function App() {
   return (
     <div className="App">
