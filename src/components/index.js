@@ -1,3 +1,4 @@
+
 import './css/styles.css'
 import './footer/Footer.js'
 import React, { useState, useEffect} from 'react';
@@ -12,39 +13,15 @@ function TodoList() {
   const [todo, setTodo] = useState('');
   //The "Initial_State" is the initial value of the toDoList state.
   const [toDoList, setToDoList] = useState(Initial_State);
-  const [filteredTodoList, setFilteredTodoList] = useState(Initial_State);
   //"filterStatus" variable can be used to filter the to-do items based on a certain status chosen by the user. 
   const [filterStatus, setFilterStatus] = useState(null);
- 
-  //the effect is set to run the "setFilteredList" function when the "filterStatus" variable changes. 
-  //it will call setFilteredList function, where setFilteredList will filter the To-do list based on filterStatus and update the FilteredList state variable.
-  useEffect(()=>{
-    debugger;
-    setFilteredList();
-  },[filterStatus]);
-
-  useEffect(()=>{
-    debugger;
-    setFilteredList();
-  },[toDoList]);
-
-  //The function first checks if the "filterStatus" variable is null.
-  // If it is, it sets the "filteredTodoList" state to be the same as the "toDoList" state, meaning it is not filtered
-  const setFilteredList=()=>{
-    if(filterStatus === null){
-      setFilteredTodoList(toDoList)
-    }else{
-      setFilteredTodoList(toDoList.filter(item=>item.completed==filterStatus))
-    }
-  }
-  
 
   const handleChange = event => {
     console.log(event.target.value)
     setTodo(event.target.value);
   };
 
-  //When it is triggered, it will first check if the "todo" state is an empty string, 
+  //When it is triggered, it will first check if the "todo" state i*s an empty string, 
   //if it is then it will exit the function without doing anything.
   const handleSubmit = event => {
 
@@ -66,25 +43,43 @@ function TodoList() {
     //toDoList.find(x=>x.id == id) kod parçası, dizide id değerine eşit olan bir öğeyi arar ve bu öğeyi döndürür.
     //completed = event.target.checked kod parçası, bulunan öğenin completed özelliğinin değerini event.target.checked değerine eşitler.
     //Bu şekilde, toDoList dizisindeki belirli bir öğenin tamamlanma durumu değiştirilmiş olur.
+    // setToDoList((item) =>
+    // {
+    //   if(item.id == id)
+    //   {
+    //     item.completed = event.target.checked;
+    //   }
 
-    toDoList.find(x=>x.id == id).completed = event.target.checked;
-    setToDoList(toDoList.filter(x=>x.id == true));        
-  };
-
-  function handleCompleteAll() {
-    // toDoList.map(x=>x.completed = true);
-    // setToDoList(item => {
     //   return item;
     // });
-    setToDoList(prevState => {
-      const updatedList = prevState.map(item => {
-        return {...item, completed: true};
-      });
-      return updatedList;
+
+
+    // toDoList.find(x=>x.id == id).completed = event.target.checked;
+    // setToDoList(toDoList.filter(x=>x.id>0));
+
+    const updateToDoList = toDoList.map(item => {
+      if(item.id == id){
+        item.completed = event.target.checked;
+        return {
+          ...item,
+          completed: event.target.checked
+        }
+      }
+      else{
+        return item;
+      }
     });
 
-    // setToDoList(toDoList.filter(x=>x.id>0)); 
+    setToDoList(updateToDoList);
   };
+
+  function removeItem(id){
+    setToDoList(toDoList.filter(x=>x.id != id));
+  }
+
+  function clearCompleted(){
+    setToDoList(toDoList.filter(x=>x.completed == false));
+  }
 
   return (
     
@@ -92,58 +87,30 @@ function TodoList() {
       <div>
         <form className='header' onSubmit={handleSubmit}>
           <h1>todos</h1>
-          <input className='new-todo' value={todo} onChange={handleChange} placeholder="What needs to be done?"/>
+          <input className='new-todo' value={todo} onChange={handleChange} defaultValue="What needs to be done?"/>
         </form>
         <section className='main'>
          <div>
-        
          <ul className='todo-list'>
-           {filteredTodoList.map((item) => (
-            // <div key={item.id}>
-            //   {/* her ögenin default değerinin completed durumunu değiştirir */}
-            //  <input type='checkbox' defaultChecked={item.completed} onChange={(event) => handleCompleted(event,item.id)}/>
-            //  <li>{item.title}</li>
-            // </div>
-            <li class={item.completed ? "completed" : ""}>
-              <div class="view" >
-                <input class="toggle" type="checkbox" defaultChecked={item.completed}/>
+           {toDoList.filter(x => filterStatus == null || x.completed == filterStatus).map((item,index) => (
+            <li key={item.id} className={item.completed ? "completed" : ""}>
+              <div className="view" >
+                <input className="toggle" type="checkbox" onChange={(event) => handleCompleted(event,item.id)} defaultChecked={item.completed}/>
                   <label >{item.title}</label>
-                  <button class="destroy" 
-            // onClick={removeItem{item.id}}
-            >
+                  <button className="destroy" onClick={() => removeItem(item.id)}>
                   </button>
               </div>
-              <input class="edit" value="öööö" />
+              <input className="edit" value="öööö" />
             </li>
            ))}
           </ul>
          </div>
         </section>
         <footer className='footer'>
-          {/* <Footer setFilterStatus={setFilterStatus}/> */}
-          <span class="todo-count">
-			      <strong>2</strong>
-			      <span> </span>
-			      <span>items</span>
-			      <span>left</span>
-		      </span>
-          <ul className='filters'>
-            <li>
-              <a href="#/" class="selected">All</a>
-            </li>
-            <span> </span>
-            <li>
-              <a href="#/active">Active</a>
-            </li>
-            <span> </span>
-            <li>
-              <a href="#/completed">Completed</a>
-            </li>
-            <span> </span>
-          </ul>
-          {/* <button class="clear-completed">
+          <Footer setFilterStatus={setFilterStatus} count={toDoList.filter(x => x.completed == false).length}/>
+          <button class="clear-completed" onClick={() => clearCompleted()}>
 		      	Clear completed
-		      </button> */}
+		      </button>
         </footer>
       </div>
         
@@ -153,3 +120,4 @@ function TodoList() {
 }
 
 export default TodoList;
+

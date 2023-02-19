@@ -23,22 +23,16 @@ function Footer(props) {
   }
 
   return (
-    <div>
-         <div id='footer'>
-          <button  onClick={setCompletedList}>completed</button>
-          <button  onClick={setUncompletedList}>uncompleted</button>
-          <button  onClick={setAllList}>all</button>
-        </div>
-
-        <span class="todo-count">
-			      <strong>2</strong>
+    <div >
+        <span className="todo-count">
+			      <strong>{props.count}</strong>
 			      <span> </span>
 			      <span>items</span>
 			      <span>left</span>
 		      </span>
           <ul className='filters'>
             <li>
-              <a href="#/" class="selected">All</a>
+              <a onClick={setAllList}>All</a>
             </li>
             <span> </span>
             <li>
@@ -50,11 +44,11 @@ function Footer(props) {
             </li>
             <span> </span>
           </ul>
-          {/* <button class="clear-completed">
-		      	Clear completed
-		      </button> */}
     </div>
   )
 }
 
 export default Footer
+
+
+
