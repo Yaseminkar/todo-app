@@ -1,7 +1,5 @@
-
 import './css/styles.css'
-import './footer/Footer.js'
-import React, { useState, useEffect} from 'react';
+import React, { useState} from 'react';
 import Footer from './footer/Footer.js';
 
 const Initial_State =[
@@ -14,15 +12,15 @@ function TodoList() {
   //The "Initial_State" is the initial value of the toDoList state.
   const [toDoList, setToDoList] = useState(Initial_State);
   //"filterStatus" variable can be used to filter the to-do items based on a certain status chosen by the user. 
-  const [filterStatus, setFilterStatus] = useState(null);
+  const [filterStatus, setFilterStatus] = useState(null); 
 
   const handleChange = event => {
-    console.log(event.target.value)
     setTodo(event.target.value);
   };
 
-  //When it is triggered, it will first check if the "todo" state i*s an empty string, 
-  //if it is then it will exit the function without doing anything.
+  //The function, named handleSubmit, takes an event parameter. Firstly, it calls the event.preventDefault() method to prevent the page from being refreshed.
+  //This code snippet can be used to add a new item to a todo list when a form is submitted or the Enter key is pressed.
+  //setTodo('') is used to update the todo variable with an empty value, clearing the input field.
   const handleSubmit = event => {
 
     event.preventDefault();
@@ -35,31 +33,12 @@ function TodoList() {
     setTodo('');
   };
 
+  //Firstly, a .map() method is called on the elements in the toDoList array. 
+  //This method creates a new array called updateToDoList and performs an operation for each item.
+  //This code snippet can be used to determine whether an item in a todo list has been completed or not, and to update the state of the toDoList array when an item's completion status changes.
   function handleCompleted(event, id) {
-    // setCompeleted(event.target.checked)
-    //git elemanı onun id si ile bul statusunu değiştir.
-    //buradaki x listenin içindeki her elemanın
-    //Bu satır JavaScript kodudur ve bir toDoList dizisinde belirli bir öğenin tamamlanma durumunu değiştirir.
-    //toDoList.find(x=>x.id == id) kod parçası, dizide id değerine eşit olan bir öğeyi arar ve bu öğeyi döndürür.
-    //completed = event.target.checked kod parçası, bulunan öğenin completed özelliğinin değerini event.target.checked değerine eşitler.
-    //Bu şekilde, toDoList dizisindeki belirli bir öğenin tamamlanma durumu değiştirilmiş olur.
-    // setToDoList((item) =>
-    // {
-    //   if(item.id == id)
-    //   {
-    //     item.completed = event.target.checked;
-    //   }
-
-    //   return item;
-    // });
-
-
-    // toDoList.find(x=>x.id == id).completed = event.target.checked;
-    // setToDoList(toDoList.filter(x=>x.id>0));
-
     const updateToDoList = toDoList.map(item => {
-      if(item.id == id){
-        item.completed = event.target.checked;
+      if(item.id === id){
         return {
           ...item,
           completed: event.target.checked
@@ -73,26 +52,36 @@ function TodoList() {
     setToDoList(updateToDoList);
   };
 
+  //This code snippet can be used to remove a specific item from a todo list and update the state of the toDoList array.
   function removeItem(id){
-    setToDoList(toDoList.filter(x=>x.id != id));
+    setToDoList(toDoList.filter(x=>x.id !== id));
   }
 
+  //This code snippet can be used to remove completed items from a todo list and update the state of the toDoList array.
   function clearCompleted(){
-    setToDoList(toDoList.filter(x=>x.completed == false));
+    setToDoList(toDoList.filter(x=>x.completed === false));
   }
+
+  function toggleAll(event)
+  {
+    setFilterStatus(event.target.checked ? null : 999);
+  }
+
+
 
   return (
-    
     <section className='todoapp'>
       <div>
         <form className='header' onSubmit={handleSubmit}>
           <h1>todos</h1>
-          <input className='new-todo' value={todo} onChange={handleChange} defaultValue="What needs to be done?"/>
+          <input className='new-todo' placeholder='What needs to be done?' value={todo} onChange={handleChange} />
         </form>
         <section className='main'>
          <div>
+         <input defaultChecked={true} type="checkbox"  onChange={(event) => toggleAll(event)} id="toggle-all" className="toggle-all" />
+         <label htmlFor="toggle-all" ></label>
          <ul className='todo-list'>
-           {toDoList.filter(x => filterStatus == null || x.completed == filterStatus).map((item,index) => (
+           {toDoList.filter(x => filterStatus === null || x.completed === filterStatus).map((item) => (
             <li key={item.id} className={item.completed ? "completed" : ""}>
               <div className="view" >
                 <input className="toggle" type="checkbox" onChange={(event) => handleCompleted(event,item.id)} defaultChecked={item.completed}/>
@@ -100,15 +89,15 @@ function TodoList() {
                   <button className="destroy" onClick={() => removeItem(item.id)}>
                   </button>
               </div>
-              <input className="edit" value="öööö" />
+              {/* <input className="edit" value="öööö" /> */}
             </li>
            ))}
-          </ul>
+          </ul> 
          </div>
         </section>
         <footer className='footer'>
-          <Footer setFilterStatus={setFilterStatus} count={toDoList.filter(x => x.completed == false).length}/>
-          <button class="clear-completed" onClick={() => clearCompleted()}>
+          <Footer filterStatus={filterStatus} setFilterStatus={setFilterStatus} count={toDoList.filter(x => x.completed === false).length}/>
+          <button className="clear-completed" onClick={() => clearCompleted()}>
 		      	Clear completed
 		      </button>
         </footer>

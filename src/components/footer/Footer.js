@@ -2,7 +2,7 @@ import React from 'react'
 
 
 function Footer(props) {
-
+  
   //filteredTodoList will be updated to show only the uncompleted tasks.
   const setUncompletedList = event => {
     event.preventDefault();
@@ -32,15 +32,15 @@ function Footer(props) {
 		      </span>
           <ul className='filters'>
             <li>
-              <a onClick={setAllList}>All</a>
+              <a className={props.filterStatus === null ? 'selected' : ''} onClick={setAllList}>All</a>
             </li>
             <span> </span>
             <li>
-              <a onClick={setUncompletedList}>Active</a>
+              <a className={props.filterStatus === false ? 'selected' : ''} onClick={setUncompletedList}>Active</a>
             </li>
             <span> </span>
             <li>
-              <a onClick={setCompletedList}>Completed</a>
+              <a className={props.filterStatus === true ? 'selected' : ''}  onClick={setCompletedList}>Completed</a>
             </li>
             <span> </span>
           </ul>
