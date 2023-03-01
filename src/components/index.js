@@ -11,8 +11,12 @@ function TodoList() {
   const [todo, setTodo] = useState('');
   //The "Initial_State" is the initial value of the toDoList state.
   const [toDoList, setToDoList] = useState(Initial_State);
-  //"filterStatus" variable can be used to filter the to-do items based on a certain status chosen by the user. 
-  const [filterStatus, setFilterStatus] = useState(null); 
+  //"filterStatus" variable can be used to filter the to-do items based on a certain status chosen by the user.
+  const [filterStatus, setFilterStatus] = useState(null);
+  //
+  const [idToEdit, setIdToEdit] = useState(0);
+  const [nameToEdit, setNameToEdit] = useState('');
+
 
   const handleChange = event => {
     setTodo(event.target.value);
@@ -33,7 +37,7 @@ function TodoList() {
     setTodo('');
   };
 
-  //Firstly, a .map() method is called on the elements in the toDoList array. 
+  //Firstly, a .map() method is called on the elements in the toDoList array.
   //This method creates a new array called updateToDoList and performs an operation for each item.
   //This code snippet can be used to determine whether an item in a todo list has been completed or not, and to update the state of the toDoList array when an item's completion status changes.
   function handleCompleted(event, id) {
@@ -67,6 +71,34 @@ function TodoList() {
     setFilterStatus(event.target.checked ? null : 999);
   }
 
+  function updateIdToEdit(id)
+  {
+    setIdToEdit(id);
+    setNameToEdit(toDoList.find(x=>x.id === id).title);
+  }
+
+  function handleEdit (event,id) {
+    setNameToEdit(event.target.value);
+
+    const listToUpdate = toDoList.map(item=> {
+        if(item.id === id) {
+          return {
+            ...item,
+            title: event.target.value
+          }
+        }
+        else
+        {
+          return item;
+        }
+      });
+
+    setToDoList(listToUpdate);
+  };
+
+  function handleBlur() {
+    setIdToEdit(0);
+  }
 
 
   return (
@@ -82,17 +114,17 @@ function TodoList() {
          <label htmlFor="toggle-all" ></label>
          <ul className='todo-list'>
            {toDoList.filter(x => filterStatus === null || x.completed === filterStatus).map((item) => (
-            <li key={item.id} className={item.completed ? "completed" : ""}>
+            <li key={item.id} className={((item.completed && item.id === idToEdit) ? "completed editing" : ((!item.completed && item.id === idToEdit) ? "editing": (item.completed && item.id !== idToEdit ? "completed" : "")))}>
               <div className="view" >
                 <input className="toggle" type="checkbox" onChange={(event) => handleCompleted(event,item.id)} defaultChecked={item.completed}/>
-                  <label >{item.title}</label>
+                  <label onClick={() => updateIdToEdit(item.id)}>{item.title}</label>
                   <button className="destroy" onClick={() => removeItem(item.id)}>
                   </button>
               </div>
-              {/* <input className="edit" value="öööö" /> */}
+              <input onBlur={handleBlur} className="edit" value={nameToEdit} onChange={(event) => handleEdit(event,item.id)}/>
             </li>
            ))}
-          </ul> 
+          </ul>
          </div>
         </section>
         <footer className='footer'>
@@ -102,8 +134,6 @@ function TodoList() {
 		      </button>
         </footer>
       </div>
-        
-       
     </section>
   );
 }
